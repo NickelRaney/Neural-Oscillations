@@ -133,7 +133,6 @@ firing_rate4 = firing_rate(spikes4, param4.ne, param4.ni);
 scatterplot(spikes4, param4.ne, param4.ni,'n=100-t=1000-hom')
 firing_rate4
 
-
 %% Full model: regular & small-size & random initialization
 
 param5.ne       = 75;

@@ -1,0 +1,82 @@
+function [] = correlation(spike,ne,ni)
+% A function to compute and show correlation.
+
+corr_ee=zeros(1,30); %conditioned on e at t=0, count the e spikes nearby.
+corr_ie=zeros(1,30); %conditioned on e at t=0, count the i spikes nearby.
+corr_ei=zeros(1,30); %conditioned on i at t=0, count the e spikes nearby.
+corr_ii=zeros(1,30); %conditioned on i at t=0, count the i spikes nearby.
+
+%we count all the spikes during the last 200ms of a trial (785ms-985ms)
+num_e=0; %number of e spikes during a given time window.
+num_i=0; %number of i spikes during a given time window.
+
+count=zeros(1,30);
+
+for i=1:ne
+    for j=2:spike(1,i)+1
+        if spike(i,j)>785 && spike(i,j)<985
+            num_e=num_e+1;
+            for k=1:ne
+                count=zeros(1,30);
+                for l=2:spike(1,k)+1
+                    if spike(k,l)>spike(i,j)-15 && spike(k,l)<spike(i,j)+15
+                    count(floor(spike(k,l)-spike(i,j))+16)=1;
+                    end
+                end
+                corr_ee=corr_ee+count;
+            end
+            for k=ne+1:ne+ni
+                count=zeros(1,30);
+                for l=2:spike(1,k)+1
+                    if spike(k,l)>spike(i,j)-15 && spike(k,l)<spike(i,j)+15
+                    count(floor(spike(k,l)-spike(i,j))+16)=1;
+                    end
+                end
+                corr_ie=corr_ie+count;
+            end
+        end
+    end
+end
+
+for i=ne+1:ne+ni
+    for j=2:spike(1,i)+1
+        if spike(i,j)>785 && spike(i,j)<985
+            num_i=num_i+1;
+            for k=1:ne
+                count=zeros(1,30);
+                for l=2:spike(1,k)+1
+                    if spike(k,l)>spike(i,j)-15 && spike(k,l)<spike(i,j)+15
+                    count(floor(spike(k,l)-spike(i,j))+16)=1;
+                    end
+                end
+                corr_ei=corr_ei+count;
+            end
+            for k=ne+1:ne+ni
+                count=zeros(1,30);
+                for l=2:spike(1,k)+1
+                    if spike(k,l)>spike(i,j)-15 && spike(k,l)<spike(i,j)+15
+                    count(floor(spike(k,l)-spike(i,j))+16)=1;
+                    end
+                end
+                corr_ii=corr_ii+count;
+            end
+        end
+    end
+end
+
+corr_ee=corr_ee/(num_e*ne);
+corr_ie=corr_ie/(num_e*ni);
+corr_ei=corr_ei/(num_i*ne);
+corr_ii=corr_ii/(num_i*ni);
+
+subplot(1,4,1);
+bar(corr_ee,'b');
+title('E spikes conditioned on E at t=0');
+subplot(1,4,1);
+bar(corr_ee,'b');
+subplot(1,4,1);
+bar(corr_ee,'b');
+subplot(1,4,1);
+bar(corr_ee,'b');
+
+            
